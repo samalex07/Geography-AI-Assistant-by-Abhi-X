@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geo Guide — Geography Intelligence System</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #030303;
+    --bg2: #080808;
+    --bg3: #0e0e0e;
+    --bg4: #141414;
+    --border: #1a1a1a;
+    --border2: #252525;
+    --white: #ffffff;
+    --dim: #888888;
+    --dim2: #444444;
+    --dim3: #222222;
+    --text: #cccccc;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* GRID */
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  section, nav, footer { position:relative; z-index:1; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top:0; left:0; right:0;
+    height:60px;
+    background: rgba(3,3,3,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border2);
+    display:flex; align-items:center;
+    padding:0 60px;
+    z-index:100;
+  }
+  .nav-logo {
+    font-family:'Orbitron',monospace;
+    font-size:18px;
+    font-weight:900;
+    color:var(--white);
+    letter-spacing:4px;
+    text-shadow:0 0 20px rgba(255,255,255,0.3);
+    flex:1;
+  }
+  .nav-links { display:flex; gap:32px; align-items:center; }
+  .nav-links a {
+    color:var(--dim);
+    text-decoration:none;
+    font-size:12px;
+    font-family:'Space Mono',monospace;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    transition:color .2s;
+  }
+  .nav-links a:hover { color:var(--white); }
+  .nav-cta {
+    background:var(--white) !important;
+    color:#000 !important;
+    padding:8px 20px;
+    font-family:'Orbitron',monospace !important;
+    font-size:10px !important;
+    font-weight:700;
+    letter-spacing:2px;
+    border-radius:2px;
+    transition:all .2s !important;
+  }
+  .nav-cta:hover { background:#ddd !important; box-shadow:0 0 20px rgba(255,255,255,0.15) !important; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:100px 20px 60px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after {
+    content:'';
+    position:absolute;
+    bottom:0; left:50%;
+    transform:translateX(-50%);
+    width:600px; height:1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  }
+  .hero-eyebrow {
+    font-family:'Space Mono',monospace;
+    font-size:10px;
+    color:var(--dim2);
+    letter-spacing:4px;
+    text-transform:uppercase;
+    margin-bottom:28px;
+    border:1px solid var(--dim3);
+    padding:6px 18px;
+    border-radius:2px;
+    animation: fadeSlideUp .8s ease both;
+  }
+  .hero-title {
+    font-family:'Orbitron',monospace;
+    font-size:clamp(52px,9vw,96px);
+    font-weight:900;
+    color:var(--white);
+    letter-spacing:8px;
+    line-height:1.05;
+    text-shadow:
+      0 0 60px rgba(255,255,255,0.2),
+      0 0 120px rgba(255,255,255,0.06);
+    margin-bottom:8px;
+    animation: fadeSlideUp .9s ease .1s both;
+  }
+  .hero-title-sub {
+    font-family:'Orbitron',monospace;
+    font-size:clamp(12px,2vw,18px);
+    font-weight:400;
+    color:var(--dim);
+    letter-spacing:6px;
+    text-transform:uppercase;
+    margin-bottom:32px;
+    animation: fadeSlideUp 1s ease .2s both;
+  }
+  .hero-desc {
+    font-size:16px;
+    color:var(--dim);
+    max-width:560px;
+    line-height:1.8;
+    margin-bottom:48px;
+    font-weight:400;
+    animation: fadeSlideUp 1s ease .3s both;
+  }
+  .hero-btns {
+    display:flex; gap:14px; flex-wrap:wrap; justify-content:center;
+    animation: fadeSlideUp 1s ease .4s both;
+  }
+  .btn-w {
+    background:var(--white);
+    color:#000;
+    border:none;
+    padding:14px 32px;
+    font-family:'Orbitron',monospace;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+    border-radius:2px;
+    cursor:pointer;
+    text-decoration:none;
+    transition:all .2s;
+    display:inline-block;
+  }
+  .btn-w:hover { background:#ddd; box-shadow:0 0 30px rgba(255,255,255,0.18); transform:translateY(-1px); }
+  .btn-outline {
+    background:transparent;
+    color:var(--white);
+    border:1px solid var(--border2);
+    padding:14px 32px;
+    font-family:'Space Mono',monospace;
+    font-size:11px;
+    letter-spacing:1.5px;
+    border-radius:2px;
+    cursor:pointer;
+    text-decoration:none;
+    transition:all .2s;
+    display:inline-block;
+  }
+  .btn-outline:hover { border-color:var(--dim); background:var(--bg3); }
+  .hero-exams {
+    display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
+    margin-top:52px;
+    animation: fadeSlideUp 1s ease .5s both;
+  }
+  .exam-pill {
+    background:var(--bg3);
+    border:1px solid var(--border2);
+    border-radius:2px;
+    padding:5px 16px;
+    font-family:'Orbitron',monospace;
+    font-size:10px;
+    color:var(--dim);
+    letter-spacing:2px;
+    transition:all .2s;
+  }
+  .exam-pill:hover { border-color:var(--dim2); color:var(--white); }
+
+  @keyframes fadeSlideUp {
+    from { opacity:0; transform:translateY(24px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  /* ── STATS ── */
+  .stats {
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+    background:var(--bg2);
+    padding:40px 60px;
+    display:flex;
+    justify-content:center;
+    gap:80px;
+    flex-wrap:wrap;
+  }
+  .stat-item { text-align:center; }
+  .stat-num {
+    font-family:'Orbitron',monospace;
+    font-size:36px;
+    font-weight:800;
+    color:var(--white);
+    display:block;
+    line-height:1;
+    margin-bottom:6px;
+  }
+  .stat-label {
+    font-size:11px;
+    color:var(--dim);
+    font-family:'Space Mono',monospace;
+    letter-spacing:2px;
+    text-transform:uppercase;
+  }
+
+  /* ── FEATURES ── */
+  .features {
+    padding:100px 60px;
+    max-width:1200px;
+    margin:0 auto;
+  }
+  .section-eyebrow {
+    font-family:'Space Mono',monospace;
+    font-size:10px;
+    color:var(--dim2);
+    letter-spacing:3px;
+    text-transform:uppercase;
+    margin-bottom:14px;
+  }
+  .section-title {
+    font-family:'Orbitron',monospace;
+    font-size:clamp(28px,4vw,42px);
+    font-weight:800;
+    color:var(--white);
+    letter-spacing:3px;
+    margin-bottom:16px;
+  }
+  .section-desc {
+    font-size:15px;
+    color:var(--dim);
+    max-width:520px;
+    line-height:1.8;
+    margin-bottom:60px;
+  }
+  .features-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(300px,1fr));
+    gap:1px;
+    background:var(--border);
+    border:1px solid var(--border);
+  }
+  .feature-card {
+    background:var(--bg);
+    padding:36px 32px;
+    transition:background .2s;
+  }
+  .feature-card:hover { background:var(--bg2); }
+  .feature-icon {
+    font-size:28px;
+    margin-bottom:18px;
+    display:block;
+  }
+  .feature-title {
+    font-family:'Orbitron',monospace;
+    font-size:13px;
+    font-weight:700;
+    color:var(--white);
+    letter-spacing:2px;
+    margin-bottom:10px;
+  }
+  .feature-desc {
+    font-size:13px;
+    color:var(--dim);
+    line-height:1.8;
+  }
+
+  /* ── EXAM SECTION ── */
+  .exams-section {
+    padding:80px 60px;
+    background:var(--bg2);
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+  }
+  .exams-inner { max-width:1200px; margin:0 auto; }
+  .exams-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(160px,1fr));
+    gap:12px;
+    margin-top:50px;
+  }
+  .exam-card {
+    background:var(--bg);
+    border:1px solid var(--border2);
+    border-radius:2px;
+    padding:28px 20px;
+    text-align:center;
+    transition:all .2s;
+    cursor:default;
+  }
+  .exam-card:hover {
+    border-color:var(--dim2);
+    background:var(--bg3);
+    transform:translateY(-2px);
+  }
+  .exam-card-name {
+    font-family:'Orbitron',monospace;
+    font-size:18px;
+    font-weight:800;
+    color:var(--white);
+    letter-spacing:2px;
+    margin-bottom:8px;
+  }
+  .exam-card-desc {
+    font-size:11px;
+    color:var(--dim);
+    font-family:'Space Mono',monospace;
+    line-height:1.6;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .how {
+    padding:100px 60px;
+    max-width:1000px;
+    margin:0 auto;
+  }
+  .steps {
+    display:flex;
+    flex-direction:column;
+    gap:0;
+    margin-top:60px;
+    position:relative;
+  }
+  .steps::before {
+    content:'';
+    position:absolute;
+    left:24px; top:20px; bottom:20px;
+    width:1px;
+    background:var(--border2);
+  }
+  .step {
+    display:flex;
+    gap:32px;
+    align-items:flex-start;
+    padding:28px 0;
+    border-bottom:1px solid var(--border);
+  }
+  .step:last-child { border:none; }
+  .step-num {
+    width:50px; height:50px;
+    background:var(--bg3);
+    border:1px solid var(--border2);
+    border-radius:2px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Orbitron',monospace;
+    font-size:14px;
+    font-weight:800;
+    color:var(--white);
+    flex-shrink:0;
+    position:relative; z-index:1;
+  }
+  .step-title {
+    font-family:'Orbitron',monospace;
+    font-size:13px;
+    font-weight:700;
+    color:var(--white);
+    letter-spacing:1.5px;
+    margin-bottom:8px;
+  }
+  .step-desc {
+    font-size:13px;
+    color:var(--dim);
+    line-height:1.8;
+  }
+
+  /* ── PREVIEW / DEMO ── */
+  .preview {
+    padding:80px 60px;
+    background:var(--bg2);
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+  }
+  .preview-inner {
+    max-width:900px;
+    margin:0 auto;
+  }
+  .chat-demo {
+    background:var(--bg);
+    border:1px solid var(--border2);
+    border-radius:2px;
+    margin-top:50px;
+    overflow:hidden;
+  }
+  .chat-demo-bar {
+    background:var(--bg3);
+    border-bottom:1px solid var(--border);
+    padding:10px 16px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .chat-demo-dot {
+    width:8px; height:8px;
+    border-radius:50%;
+  }
+  .chat-demo-title {
+    font-family:'Orbitron',monospace;
+    font-size:10px;
+    color:var(--dim2);
+    letter-spacing:2px;
+    flex:1;
+  }
+  .chat-demo-status {
+    font-family:'Space Mono',monospace;
+    font-size:9px;
+    color:var(--dim2);
+    letter-spacing:1px;
+  }
+  .chat-demo-body { padding:24px; display:flex; flex-direction:column; gap:16px; }
+  .demo-msg { display:flex; gap:10px; }
+  .demo-msg.user { flex-direction:row-reverse; }
+  .demo-avatar {
+    width:28px; height:28px;
+    border-radius:2px;
+    background:var(--bg3);
+    border:1px solid var(--border2);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Orbitron',monospace;
+    font-size:8px;
+    color:var(--dim);
+    flex-shrink:0;
+  }
+  .demo-bubble {
+    max-width:75%;
+    background:var(--bg3);
+    border:1px solid var(--border2);
+    border-radius:2px;
+    padding:10px 14px;
+    font-size:13px;
+    line-height:1.7;
+    color:var(--text);
+  }
+  .demo-msg.user .demo-bubble { background:var(--bg4); }
+  .demo-bubble.geo { border-left:2px solid var(--white); }
+  .demo-badge {
+    display:inline-block;
+    background:var(--bg4);
+    border:1px solid var(--border2);
+    color:var(--dim);
+    font-size:8px;
+    font-family:'Space Mono',monospace;
+    padding:2px 6px;
+    border-radius:2px;
+    margin-bottom:6px;
+    letter-spacing:1px;
+  }
+  .demo-strong { color:var(--white); font-weight:600; }
+
+  /* ── CTA ── */
+  .cta {
+    padding:100px 60px;
+    text-align:center;
+  }
+  .cta-title {
+    font-family:'Orbitron',monospace;
+    font-size:clamp(32px,5vw,56px);
+    font-weight:900;
+    color:var(--white);
+    letter-spacing:4px;
+    margin-bottom:16px;
+    text-shadow:0 0 40px rgba(255,255,255,0.12);
+  }
+  .cta-desc {
+    font-size:15px;
+    color:var(--dim);
+    max-width:480px;
+    margin:0 auto 40px;
+    line-height:1.8;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top:1px solid var(--border);
+    padding:32px 60px;
+    background:var(--bg2);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+  .footer-logo {
+    font-family:'Orbitron',monospace;
+    font-size:14px;
+    font-weight:800;
+    color:var(--white);
+    letter-spacing:3px;
+  }
+  .footer-made {
+    font-family:'Space Mono',monospace;
+    font-size:11px;
+    color:var(--dim2);
+    letter-spacing:1.5px;
+  }
+  .footer-made span { color:var(--white); font-weight:700; }
+  .footer-links {
+    display:flex; gap:24px;
+  }
+  .footer-links a {
+    color:var(--dim2);
+    text-decoration:none;
+    font-size:11px;
+    font-family:'Space Mono',monospace;
+    letter-spacing:1px;
+    transition:color .2s;
+  }
+  .footer-links a:hover { color:var(--white); }
+
+  /* MOBILE */
+  @media(max-width:768px) {
+    nav { padding:0 20px; }
+    .nav-links { gap:16px; }
+    .nav-links a:not(.nav-cta) { display:none; }
+    .hero { padding:80px 20px 50px; }
+    .hero-title { letter-spacing:4px; }
+    .stats { padding:32px 20px; gap:40px; }
+    .features, .how, .cta { padding:60px 20px; }
+    .exams-section, .preview { padding:60px 20px; }
+    footer { padding:24px 20px; flex-direction:column; text-align:center; }
+    .features-grid { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">GEO GUIDE</div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#exams">Exams</a>
+    <a href="#how">How It Works</a>
+    <a href="geo-guide-app.html" class="nav-cta">OPEN APP</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">Geography Intelligence System · Made by Abhi X</div>
+  <div class="hero-title">GEO<br>GUIDE</div>
+  <div class="hero-title-sub">Your Geography AI Assistant</div>
+  <div class="hero-desc">
+    The most advanced Geography AI built for Indian students. Comprehensive answers for UPSC, CUET, BA, MA, BSc, MSc, and PhD Geography — all in one intelligent system.
+  </div>
+  <div class="hero-btns">
+    <a href="geo-guide-app.html" class="btn-w">START LEARNING NOW</a>
+    <a href="#features" class="btn-outline">Explore Features</a>
+  </div>
+  <div class="hero-exams">
+    <span class="exam-pill">BA GEO</span>
+    <span class="exam-pill">BSc GEO</span>
+    <span class="exam-pill">MA GEO</span>
+    <span class="exam-pill">MSc GEO</span>
+    <span class="exam-pill">PhD GEO</span>
+    <span class="exam-pill">CUET</span>
+    <span class="exam-pill">UPSC PRE</span>
+    <span class="exam-pill">UPSC MAINS</span>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat-item">
+    <span class="stat-num">500+</span>
+    <span class="stat-label">Geography Topics</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">8</span>
+    <span class="stat-label">Exam Categories</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">∞</span>
+    <span class="stat-label">Questions Answered</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">24/7</span>
+    <span class="stat-label">Always Available</span>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-eyebrow">Core Features</div>
+  <div class="section-title">BUILT FOR<br>GEOGRAPHERS</div>
+  <div class="section-desc">Everything a Geography student needs — from introductory concepts to advanced research-level discussions.</div>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <span class="feature-icon">🌍</span>
+      <div class="feature-title">GEOGRAPHY EXPERT AI</div>
+      <div class="feature-desc">Deep expertise in Physical, Human, Economic, Political, and Regional Geography. Exam-focused answers with key points, definitions, and examples.</div>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📚</span>
+      <div class="feature-title">EXAM-READY ANSWERS</div>
+      <div class="feature-desc">Every response is tailored for your exam level — UPSC Prelims, Mains, CUET, or university exams. Includes exam tips and important pointers.</div>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🧠</span>
+      <div class="feature-title">MEMORY SYSTEM</div>
+      <div class="feature-desc">Geo Guide learns what you study and remembers your topics across sessions. Personalized responses based on your study history.</div>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🖼</span>
+      <div class="feature-title">GEOGRAPHY DIAGRAMS</div>
+      <div class="feature-desc">Generate visual diagrams for Tectonic Plates, River Systems, Climate Zones, Soil Types, and more. Visual learning made easy.</div>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">💬</span>
+      <div class="feature-title">CHAT HISTORY</div>
+      <div class="feature-desc">All your conversations are saved. Pick up where you left off, review past answers, and track your learning progress.</div>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📄</span>
+      <div class="feature-title">EXPORT & SAVE</div>
+      <div class="feature-desc">Save your study sessions as text files. Create your own Geography notes from AI responses to use offline.</div>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">👤</span>
+      <div class="feature-title">PERSONAL ACCOUNTS</div>
+      <div class="feature-desc">Create your account, set your exam level, and get personalized Geography guidance. Your data stays private on your device.</div>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🗣</span>
+      <div class="feature-title">READ ALOUD</div>
+      <div class="feature-desc">Listen to Geography explanations with text-to-speech. Study on the go without always looking at the screen.</div>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🌐</span>
+      <div class="feature-title">HINDI & ENGLISH</div>
+      <div class="feature-desc">Ask questions in Hindi or English — Geo Guide responds in the same language. Made for Indian students.</div>
+    </div>
+  </div>
+</section>
+
+<!-- EXAM SECTION -->
+<section class="exams-section" id="exams">
+  <div class="exams-inner">
+    <div class="section-eyebrow">Supported Exams</div>
+    <div class="section-title">YOUR EXAM,<br>OUR EXPERTISE</div>
+    <div class="section-desc">Geo Guide is specifically optimized for every major Geography exam and academic level in India.</div>
+    <div class="exams-grid">
+      <div class="exam-card">
+        <div class="exam-card-name">UPSC</div>
+        <div class="exam-card-desc">Prelims · Mains · Geography Optional</div>
+      </div>
+      <div class="exam-card">
+        <div class="exam-card-name">CUET</div>
+        <div class="exam-card-desc">Geography entrance test preparation</div>
+      </div>
+      <div class="exam-card">
+        <div class="exam-card-name">BA</div>
+        <div class="exam-card-desc">Bachelor of Arts in Geography</div>
+      </div>
+      <div class="exam-card">
+        <div class="exam-card-name">BSc</div>
+        <div class="exam-card-desc">Bachelor of Science in Geography</div>
+      </div>
+      <div class="exam-card">
+        <div class="exam-card-name">MA</div>
+        <div class="exam-card-desc">Master of Arts in Geography</div>
+      </div>
+      <div class="exam-card">
+        <div class="exam-card-name">MSc</div>
+        <div class="exam-card-desc">Master of Science in Geography</div>
+      </div>
+      <div class="exam-card">
+        <div class="exam-card-name">PhD</div>
+        <div class="exam-card-desc">Doctoral research & entrance tests</div>
+      </div>
+      <div class="exam-card">
+        <div class="exam-card-name">NET</div>
+        <div class="exam-card-desc">UGC NET Geography preparation</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-eyebrow">How It Works</div>
+  <div class="section-title">SIMPLE.<br>POWERFUL.</div>
+  <div class="section-desc">Get started in seconds. No complex setup. Just ask your Geography question.</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div>
+        <div class="step-title">CREATE YOUR ACCOUNT</div>
+        <div class="step-desc">Sign up with your name, username, and select your exam level (BA, UPSC, PhD etc.). Your profile helps Geo Guide personalize answers for you.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div>
+        <div class="step-title">ASK YOUR GEOGRAPHY QUESTION</div>
+        <div class="step-desc">Type any Geography topic — Plate Tectonics, Indian Monsoon, Köppen Classification, River Morphology, Economic Geography. Get instant, comprehensive answers.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div>
+        <div class="step-title">GET EXAM-READY ANSWERS</div>
+        <div class="step-desc">Receive structured, detailed responses with key points, definitions, examples, and exam tips specifically for your level and exam.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div>
+        <div class="step-title">GENERATE DIAGRAMS & SAVE NOTES</div>
+        <div class="step-desc">Visualize concepts with geography diagrams. Export your conversations as study notes. Build your own Geography library.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO PREVIEW -->
+<section class="preview" id="demo">
+  <div class="preview-inner">
+    <div class="section-eyebrow">Live Preview</div>
+    <div class="section-title">SEE IT IN ACTION</div>
+    <div class="chat-demo">
+      <div class="chat-demo-bar">
+        <div class="chat-demo-dot" style="background:#333"></div>
+        <div class="chat-demo-dot" style="background:#222"></div>
+        <div class="chat-demo-dot" style="background:#1a1a1a"></div>
+        <div class="chat-demo-title">GEO GUIDE — Geography Intelligence System</div>
+        <div class="chat-demo-status">● ACTIVE</div>
+      </div>
+      <div class="chat-demo-body">
+        <div class="demo-msg user">
+          <div class="demo-avatar">U</div>
+          <div class="demo-bubble">Explain plate tectonics for UPSC Prelims</div>
+        </div>
+        <div class="demo-msg">
+          <div class="demo-avatar">GG</div>
+          <div class="demo-bubble geo">
+            <div class="demo-badge">◈ GEOGRAPHY EXPERT</div>
+            <div><span class="demo-strong">PLATE TECTONICS — UPSC Complete Guide</span></div>
+            <div style="margin-top:8px;color:#888;">⭐ <span class="demo-strong">Definition:</span> Theory explaining movement of Earth's lithospheric plates on the asthenosphere.</div>
+            <div style="margin-top:6px;color:#888;">⭐ <span class="demo-strong">Types of Boundaries:</span> Convergent · Divergent · Transform</div>
+            <div style="margin-top:6px;color:#888;">⭐ <span class="demo-strong">Key Features:</span> Mid-oceanic ridges, trenches, fold mountains...</div>
+            <div style="margin-top:8px;font-size:11px;color:#555;font-family:'Space Mono',monospace;">Relevant for: UPSC Pre · Mains GS-1 · Geography Optional</div>
+          </div>
+        </div>
+        <div class="demo-msg user">
+          <div class="demo-avatar">U</div>
+          <div class="demo-bubble">Monsoon mechanism explain karo Hindi mein</div>
+        </div>
+        <div class="demo-msg">
+          <div class="demo-avatar">GG</div>
+          <div class="demo-bubble geo">
+            <div class="demo-badge">◈ GEOGRAPHY EXPERT</div>
+            <div><span class="demo-strong">मानसून तंत्र — सम्पूर्ण व्याख्या</span></div>
+            <div style="margin-top:8px;color:#888;">⭐ <span class="demo-strong">मानसून</span> = अरबी शब्द "Mausim" से, अर्थ — मौसम</div>
+            <div style="margin-top:6px;color:#888;">⭐ <span class="demo-strong">कारण:</span> स्थल और जल के ताप में अंतर → दाब भेद → पवन प्रवाह</div>
+            <div style="margin-top:8px;font-size:11px;color:#555;font-family:'Space Mono',monospace;">UPSC · CUET · BA · MA Geography ke liye important</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="cta-title">START YOUR<br>GEO JOURNEY</div>
+  <div class="cta-desc">Join thousands of Geography students who study smarter with Geo Guide. Free to use, always available.</div>
+  <a href="geo-guide-app.html" class="btn-w">OPEN GEO GUIDE</a>
+  <div style="margin-top:20px;font-size:11px;color:var(--dim2);font-family:'Space Mono',monospace;letter-spacing:1.5px;">No signup required · Guest mode available · Data stays on your device</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">GEO GUIDE</div>
+  <div class="footer-made">Made by <span>Abhi X</span> — Geography Intelligence System</div>
+  <div class="footer-links">
+    <a href="geo-guide-app.html">Open App</a>
+    <a href="#features">Features</a>
+    <a href="#exams">Exams</a>
+  </div>
+</footer>
+
+</body>
+</html>
